@@ -124,4 +124,13 @@ object Cmds {
     } output.add(file, name.toString)
     destination
   }
+
+  def zip(files: (File, String)*)(destination: File, compressionLevel: Int)(implicit codec: Codec, d: DummyImplicit): File = {
+    for {
+      output <- new ZipOutputStream(destination.newOutputStream, codec).withCompressionLevel(compressionLevel).autoClosed
+      input <- files
+      file <- input._1.walk()
+    } output.add(file, input._2)
+    destination
+  }
 }
